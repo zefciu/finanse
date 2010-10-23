@@ -1,0 +1,4 @@
+My private project to maintain domestical spendings
+
+Rather not for end-users yet. Will contain some console scripts that talk to 
+database via sqlalchemy.
