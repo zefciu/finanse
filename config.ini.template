@@ -1,0 +1,5 @@
+[db]
+engine = postgresql+psycopg2
+host = localhost
+name = finanse
+def_user = finanse
