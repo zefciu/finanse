@@ -2,11 +2,10 @@
 
 import sqlalchemy as sa
 from sqlalchemy import orm
-import .shared
+import _shared
 from string import Template
 import ConfigParser as cp
 
-from sklep import Sklep
 
 Session = orm.sessionmaker()
 
@@ -73,12 +72,28 @@ zakupy_table = sa.Table(
 
 sa.Index('cena_produkt', zakupy_table.c.produkt_id, zakupy_table.c.cena)
 
-def Shop(object):
-    def __init__():
-        pass
+class BaseNameOnly(object):
+    def __init__(self, nazwa):
+        self.nazwa = nazwa
 
-    def create_interactively:
+class Siec(BaseNameOnly):
+    pass
 
+class Miasto(BaseNameOnly):
+    pass
+
+class Sklep(object):
+    def __init__(self, siec, miasto, nazwa):
+        self.nazwa = nazwa
+        self.siec = Siec(siec)
+        self.miasto = Miasto(nazwa)
+
+orm.mapper(Siec, sieci_table)
+orm.mapper(Miasto, miasta_table)
+orm.mapper(Sklep, sklepy_table, properties = {
+    'siec': orm.relationship(Siec, backref = 'sklep'),
+    'miasto': orm.relationship(Miasto, backref = 'sklep')
+})
 
 def init_model():
     config = cp.SafeConfigParser()

@@ -20,7 +20,7 @@ def get_answer(question, default = None, validator = None):
         if validator is None or re.match(validator, inp) is not None:
             return inp
 
-def choice (session, model, ItemConstructor, name_field = 'name', query_processor = None):
+def choice (session, model, new_item_creator, name_field = 'name', query_processor = None):
     q = session.query(model)
     if query_processor is not None:
         q = query_processor(q)
@@ -35,5 +35,5 @@ def choice (session, model, ItemConstructor, name_field = 'name', query_processo
     
     reply = get_answer('Wybierz ', '0', '[0-9]+')
     if reply is '0':
-        new_item = ItemConstructor()
-
+        return ItemConstructor()
+    return choice_tuples[reply - 1]
