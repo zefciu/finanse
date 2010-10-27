@@ -2,7 +2,7 @@
 
 import sqlalchemy as sa
 from sqlalchemy import orm
-import _shared
+import shared
 from string import Template
 import ConfigParser as cp
 
@@ -76,23 +76,75 @@ class BaseNameOnly(object):
     def __init__(self, nazwa):
         self.nazwa = nazwa
 
+    @classmethod
+    def from_name(cls, name):
+        return cls(name)
+
+    @classmethod
+    def from_input(cls):
+        name = shared.get_answer('Wprowadź %s' % cls.human_name)
+        return cls(name)
+
 class Siec(BaseNameOnly):
-    pass
+    human_name = 'Sieć'
 
 class Miasto(BaseNameOnly):
-    pass
+    human_name = 'Miasto'
+
+class Kategoria(BaseNameOnly):
+    human_name = 'Kategoria'
+
+class Podkategoria(object):
+    def __init__(self, nazwa, kategoria):
+        self.nazwa = nazwa
+        self.kategoria = kategoria
+
+    @classmethod
+    def from_input(cls, kategoria):
+        nazwa = shared.get_answer('Wprowadź podkategorię: ')
+        return cls(nazwa, kategoria)
 
 class Sklep(object):
     def __init__(self, siec, miasto, nazwa):
         self.nazwa = nazwa
-        self.siec = Siec(siec)
-        self.miasto = Miasto(nazwa)
+        self.siec = siec
+        self.miasto = nazwa
+
+class Zakup(object):
+    def __init__(self, data, sklep, produkt):
+        self.data = data
+        self.sklep = sklep
+        self.produkt = produkt
+
+class Produkt(object):
+    def __init__(self, nazwa, podkategoria):
+        self.nazwa = nazwa
+        self.podkategoria = podkategoria
+
+    @classmethod
+    def from_input(cls, podkategoria):
+        nazwa = shared.get_answer('Wprowadź produkt: ')
+        return cls(nazwa, podkategoria)
+
+
+
 
 orm.mapper(Siec, sieci_table)
 orm.mapper(Miasto, miasta_table)
 orm.mapper(Sklep, sklepy_table, properties = {
     'siec': orm.relationship(Siec, backref = 'sklep'),
     'miasto': orm.relationship(Miasto, backref = 'sklep')
+})
+orm.mapper(Kategoria, kategorie_table)
+orm.mapper(Podkategoria, podkategorie_table, properties = {
+    'kategoria': orm.relationship(Kategoria, backref = 'podkategorie')
+})
+orm.mapper(Produkt, produkty_table, properties = {
+    'podkategoria': orm.relationship(Podkategoria, backref = 'produkty')
+})
+orm.mapper(Zakup, zakupy_table, properties = {
+    'sklep': orm.relationship(Sklep, backref = 'zakupy'),
+    'produkt': orm.relationship(Produkt, backref = 'zakupy'),
 })
 
 def init_model():

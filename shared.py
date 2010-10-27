@@ -2,6 +2,7 @@
 
 import getpass
 import itertools as it
+import re
 
 def login(default_user = None):
     username = get_answer ('Login: ', default_user, '.{2,}')
@@ -10,7 +11,7 @@ def login(default_user = None):
 
 
 def get_answer(question, default = None, validator = None):
-    q_string = questions if default is None else '%s(%s)' % (question, default)
+    q_string = question if default is None else '%s(%s): ' % (question, default)
     while True:
         inp = raw_input(q_string)
 
@@ -20,14 +21,15 @@ def get_answer(question, default = None, validator = None):
         if validator is None or re.match(validator, inp) is not None:
             return inp
 
-def choice (session, model, new_item_creator, name_field = 'name', query_processor = None):
+def choice (question, session, model, new_item_creator, name_field = 'nazwa', query_processor = None):
+    print question
     q = session.query(model)
     if query_processor is not None:
         q = query_processor(q)
 
     choices = q.all()
     counter = it.count(1)
-    choice_tuples = [count.next(), choice for choice in choices]
+    choice_tuples = [(counter.next(), choice) for choice in choices]
     for t in choice_tuples:
         print '%i\t- %s' % (t[0], getattr(t[1], name_field))
 
@@ -35,5 +37,5 @@ def choice (session, model, new_item_creator, name_field = 'name', query_process
     
     reply = get_answer('Wybierz ', '0', '[0-9]+')
     if reply is '0':
-        return ItemConstructor()
-    return choice_tuples[reply - 1]
+        return new_item_creator(session)
+    return choice_tuples[int(reply) - 1][1]
