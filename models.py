@@ -82,7 +82,7 @@ class BaseNameOnly(object):
 
     @classmethod
     def from_input(cls):
-        name = shared.get_answer('Wprowadź %s' % cls.human_name)
+        name = shared.get_answer('Wprowadź %s: ' % cls.human_name)
         return cls(name)
 
 class Siec(BaseNameOnly):
@@ -110,11 +110,20 @@ class Sklep(object):
         self.siec = siec
         self.miasto = nazwa
 
+    @classmethod
+    def enter_new_shop(cls, session):
+        print('Nowy sklep:')
+        siec = shared.choice('Wybierz Sieć: ', session, Siec, enter_new(m.Siec))
+        miasto = shared.choice('Wybierz Miasto', session, Miasto, enter_new(m.Miasto))
+        nazwa = shared.get_answer('Nazwa sklepu: ')
+        return cls(siec, miasto, nazwa)
+
 class Zakup(object):
-    def __init__(self, data, sklep, produkt):
+    def __init__(self, data, sklep, produkt, cena):
         self.data = data
         self.sklep = sklep
         self.produkt = produkt
+        self.cena = cena
 
 class Produkt(object):
     def __init__(self, nazwa, podkategoria):
