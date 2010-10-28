@@ -39,3 +39,12 @@ def choice (question, session, model, new_item_creator, name_field = 'nazwa', qu
     if reply is '0':
         return new_item_creator(session)
     return choice_tuples[int(reply) - 1][1]
+
+def enter_new(cls, *args):
+    def result(session):
+        print(args)
+        inst = cls.from_input(*args)
+        session.add(inst)
+        return inst
+    return result
+

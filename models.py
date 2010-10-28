@@ -92,7 +92,7 @@ class Miasto(BaseNameOnly):
     human_name = 'Miasto'
 
 class Kategoria(BaseNameOnly):
-    human_name = 'Kategoria'
+    human_name = 'Kategorię'
 
 class Podkategoria(object):
     def __init__(self, nazwa, kategoria):
@@ -108,13 +108,13 @@ class Sklep(object):
     def __init__(self, siec, miasto, nazwa):
         self.nazwa = nazwa
         self.siec = siec
-        self.miasto = nazwa
+        self.miasto = miasto
 
     @classmethod
-    def enter_new_shop(cls, session):
+    def from_input(cls, session):
         print('Nowy sklep:')
-        siec = shared.choice('Wybierz Sieć: ', session, Siec, enter_new(m.Siec))
-        miasto = shared.choice('Wybierz Miasto', session, Miasto, enter_new(m.Miasto))
+        siec = shared.choice('Wybierz Sieć: ', session, Siec, shared.enter_new(Siec))
+        miasto = shared.choice('Wybierz Miasto', session, Miasto, shared.enter_new(Miasto))
         nazwa = shared.get_answer('Nazwa sklepu: ')
         return cls(siec, miasto, nazwa)
 
@@ -134,9 +134,6 @@ class Produkt(object):
     def from_input(cls, podkategoria):
         nazwa = shared.get_answer('Wprowadź produkt: ')
         return cls(nazwa, podkategoria)
-
-
-
 
 orm.mapper(Siec, sieci_table)
 orm.mapper(Miasto, miasta_table)
