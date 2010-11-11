@@ -37,16 +37,21 @@ def choice (question, session, model, new_item_creator, name_field = 'nazwa', qu
     if allow_empty:
         print '- - brak'
     
-    reply = get_answer(
-        'Wybierz ',
-        '0',
-        '-|([0-9]+)' if allow_empty else '[0-9]+'
-    )
-    if reply is '-':
-        return None
-    if reply is '0':
-        return new_item_creator(session)
-    return choice_tuples[int(reply) - 1][1]
+    while True:
+        reply = get_answer(
+            'Wybierz ',
+            '0',
+            '-|([0-9]+)' if allow_empty else '[0-9]+'
+        )
+        if reply is '-':
+            return None
+        if reply is '0':
+            return new_item_creator(session)
+        
+        try:
+            return choice_tuples[int(reply) - 1][1]
+        except IndexError:
+            continue
 
 def enter_new(cls, *args):
     def result(session):
