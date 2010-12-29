@@ -39,7 +39,7 @@ if __name__ == '__main__':
                 session,
                 m.Produkt,
                 shared.enter_new(m.Produkt, podkategoria),
-                query_processor = lambda x: x.filter(m.Produkt.podkategoria_id == podkategoria.id)
+                query_processor = lambda x: x.filter(m.Produkt.podkategoria_id == podkategoria.id).order_by(m.Produkt.nazwa)
             )
             cena = shared.get_answer(
                 'Cena: ',
