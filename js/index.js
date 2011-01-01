@@ -10,7 +10,8 @@ Ext.fi.nz.form = new Ext.form.FormPanel({
 					fieldLabel: 'Kategoria',
 					store: new Ext.data.JsonStore({
 							url: 'kategorie',
-							fields: ['id', 'nazwa']
+							fields: ['id', 'nazwa'],
+							restful: true
 						}),
 					valueField: 'id',
 					displayField: 'nazwa',
