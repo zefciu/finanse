@@ -159,14 +159,14 @@ def init_model():
     config = cp.SafeConfigParser()
     config.read('config.ini')
 
-    username, password = shared.login(config.get('db', 'def_user'))
+    # username, password = shared.login(config.get('db', 'def_user'))
 
     db_path = Template('$engine://$user:$password@$host/$db').substitute({
         'engine': config.get('db', 'engine'),
         'host': config.get('db', 'host'),
         'db': config.get('db', 'name'),
-        'user': username,
-        'password': password,
+        'user': config.get('db', 'user'),
+        'password': config.get('db', 'password'),
     })
     meta.engine = sa.create_engine(db_path, echo=False)
     Session.configure(bind=meta.engine)
