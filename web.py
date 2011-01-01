@@ -7,10 +7,12 @@ import finanse
 finanse.current_dir = os.path.dirname(os.path.abspath(__file__))
 
 class Root:
-    pass
-    # @cp.expose
-    # def index(self):
-    #     return 'Root'
+    @cp.expose
+    def index(self):
+        return cp.lib.static.serve_file(os.path.join(
+            finanse.current_dir, 'index.html'
+        ))
+
 
 if __name__ == '__main__':
     root = Root()
