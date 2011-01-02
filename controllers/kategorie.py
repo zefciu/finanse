@@ -7,7 +7,7 @@ from finanse.models import Session, Kategoria, init_model
 class KategorieDispatcher(CommonDispatcher):
 
     @cp.expose
-    def index(self, *args, **kwargs):
+    def GET(self, *args, **kwargs):
         init_model() 
         s = Session()
         cats = s.query(Kategoria).all()

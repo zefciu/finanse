@@ -10,11 +10,12 @@ finanse.current_dir = os.path.dirname(os.path.abspath(__file__))
 
 class Root:
     @cp.expose
-    def index(self):
+    def GET(self):
         return cp.lib.static.serve_file(os.path.join(
             finanse.current_dir, 'index.html'
         ))
     kategorie = KategorieDispatcher()
+    kategorie.exposed = True
     exposed = True
 
 if __name__ == '__main__':
