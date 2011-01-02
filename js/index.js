@@ -2,6 +2,14 @@ var Ext;
 
 Ext.ns('Ext.fi', 'Ext.fi.nz')
 
+Ext.fi.nz.onAdd = function (btn, ev) {
+	var vals, rec;
+	vals = Ext.fi.nz.form.getForm().getValues();
+	rec = new Ext.fi.nz.store.recordType(vals);
+	Ext.fi.nz.store.add(rec);
+	Ext.fi.nz.form.getForm().reset();
+};
+
 Ext.fi.nz.CommonCombo = Ext.extend(Ext.form.ComboBox, {
 		initComponent: function () {
 			this.store = new Ext.data.JsonStore({
@@ -16,7 +24,8 @@ Ext.fi.nz.CommonCombo = Ext.extend(Ext.form.ComboBox, {
 		valueField: 'id',
 		displayField: 'nazwa',
 		mode: 'remote',
-		triggerAction: 'all'
+		triggerAction: 'all',
+		submitValue: true
 	});
 
 Ext.fi.nz.form = new Ext.form.FormPanel({
@@ -25,18 +34,29 @@ Ext.fi.nz.form = new Ext.form.FormPanel({
 		items: [
 			Ext.fi.nz.cat_combo = new Ext.fi.nz.CommonCombo({
 					url: 'kategorie',
-					fieldLabel: 'Kategoria'
+					fieldLabel: 'Kategoria',
+					name: 'kategoria.nazwa',
+					hiddenName: 'kategoria.id'
 				}),
 			Ext.fi.nz.subcat_combo = new Ext.fi.nz.CommonCombo({
 					fieldLabel: 'Podkategoria',
-					url: 'podkategorie'
+					url: 'podkategorie',
+					name: 'podkategoria.nazwa',
+					hiddenName: 'podkategoria.id'
 				}),
 			Ext.fi.nz.product_combo = new Ext.fi.nz.CommonCombo({
 					fieldLabel: 'Produkt',
-					url: 'produkty'
+					url: 'produkty',
+					name: 'produkt.nazwa',
+					hiddenName: 'produkt.id'
 				}),
 			new Ext.form.TextField({name: 'ilosc', fieldLabel: 'Ilość'}),
 			new Ext.form.TextField({name: 'cena', fieldLabel: 'Cena'})
+		], buttons: [
+			{
+				text: 'Dodaj',
+				handler: Ext.fi.nz.onAdd
+			}
 		]
 	});
 
