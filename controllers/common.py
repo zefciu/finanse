@@ -1,4 +1,4 @@
 import cherrypy as cp
 
-class CommonDispatcher(object):
+class CommonController(object):
     pass

@@ -4,7 +4,7 @@ import cherrypy as cp
 import os.path
 
 import finanse
-from finanse.controllers.kategorie import KategorieDispatcher
+from finanse.controllers.kategorie import KategorieController
 
 finanse.current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -14,7 +14,7 @@ class Root:
         return cp.lib.static.serve_file(os.path.join(
             finanse.current_dir, 'index.html'
         ))
-    kategorie = KategorieDispatcher()
+    kategorie = KategorieController()
     kategorie.exposed = True
     exposed = True
 

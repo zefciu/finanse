@@ -4,7 +4,7 @@ import json
 from finanse.controllers.common_dispatcher import CommonDispatcher
 from finanse.models import Session, Kategoria, init_model
 
-class KategorieDispatcher(CommonDispatcher):
+class KategorieController(CommonDispatcher):
 
     @cp.expose
     def GET(self, *args, **kwargs):
