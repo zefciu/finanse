@@ -62,12 +62,25 @@ Ext.fi.nz.form = new Ext.form.FormPanel({
 
 
 Ext.fi.nz.store = new Ext.data.JsonStore({
+		url: 'zakupy',
+		autoSave: false,
 		restful: true,
 		fields: [
 			'id', 'produkt.id', 'produkt.nazwa', 'kategoria.id',
 			'kategoria.nazwa', 'podkategoria.id', 'podkategoria.nazwa', 'cena',
-			'ilosc' ]
+			'ilosc' ],
+		writer: new Ext.data.JsonWriter()
 	});
+
+Ext.fi.nz.store.on('beforesave', function (store, data) {
+		console.log(data.create);
+});
+
+Ext.fi.nz.onSubmit = function () {
+	Ext.fi.nz.store.save();
+}
+
+
 Ext.fi.nz.grid = new Ext.grid.GridPanel({
 		region: 'center',
 		store: Ext.fi.nz.store,
@@ -77,6 +90,20 @@ Ext.fi.nz.grid = new Ext.grid.GridPanel({
 			{header: 'Produkt', dataIndex: 'produkt.nazwa'},
 			{header: 'Ilość', dataIndex: 'ilosc'},
 			{header: 'Cena', dataIndex: 'cena'},
+		],
+		tbar: [
+			new Ext.form.Label({text: 'Sklep:'}),
+			Ext.fi.nz.shop_combo = new Ext.fi.nz.CommonCombo({
+					url: 'sklepy'
+				}),
+			new Ext.form.Label({text: 'Data:'}),
+			Ext.fi.nz.date_field = new Ext.form.DateField({format: 'Y-m-d'})
+		],
+		bbar: [
+			{
+				text: 'Zapisz zakupy',
+				handler: Ext.fi.nz.onSubmit
+			}
 		]
 	});
 

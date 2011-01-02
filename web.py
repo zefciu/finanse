@@ -7,6 +7,7 @@ import finanse
 from finanse.controllers.kategorie import KategorieController
 from finanse.controllers.podkategorie import PodkategorieController
 from finanse.controllers.produkty import ProduktyController
+from finanse.controllers.sklepy import SklepyController
 
 finanse.current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -19,6 +20,7 @@ class Root:
     kategorie = KategorieController()
     podkategorie = PodkategorieController()
     produkty = ProduktyController()
+    sklepy = SklepyController()
     exposed = True
 
 if __name__ == '__main__':
