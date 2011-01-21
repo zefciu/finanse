@@ -64,12 +64,16 @@ Ext.fi.nz.form = new Ext.form.FormPanel({
 Ext.fi.nz.store = new Ext.data.JsonStore({
 		url: 'zakupy',
 		autoSave: false,
-		restful: true,
+		restful: false,
+		root: 'zakupy',
 		fields: [
 			'id', 'produkt.id', 'produkt.nazwa', 'kategoria.id',
 			'kategoria.nazwa', 'podkategoria.id', 'podkategoria.nazwa', 'cena',
 			'ilosc' ],
-		writer: new Ext.data.JsonWriter()
+		writer: new Ext.data.JsonWriter({
+				encode: false,
+				listful: true
+			})
 	});
 
 Ext.fi.nz.store.on('beforesave', function (store, data) {
@@ -77,6 +81,8 @@ Ext.fi.nz.store.on('beforesave', function (store, data) {
 });
 
 Ext.fi.nz.onSubmit = function () {
+	Ext.fi.nz.store.setBaseParam('data', Ext.fi.nz.date_field.getValue());
+	Ext.fi.nz.store.setBaseParam('sklep', Ext.fi.nz.shop_combo.getValue());
 	Ext.fi.nz.store.save();
 }
 

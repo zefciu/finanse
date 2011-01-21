@@ -1,11 +1,11 @@
 # vim: set fileencoding=utf-8
+import ConfigParser as cp
+from string import Template
 
 import sqlalchemy as sa
 from sqlalchemy import orm
-import shared
-from string import Template
-import ConfigParser as cp
 
+import shared
 
 Session = orm.sessionmaker()
 
@@ -126,6 +126,7 @@ class Zakup(object):
         self.produkt = produkt
         self.cena = cena
         self.ilosc = ilosc
+
 
 class Produkt(object):
     def __init__(self, nazwa, podkategoria):
