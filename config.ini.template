@@ -1,5 +1,13 @@
 [db]
-engine = postgresql+psycopg2
-host = localhost
-name = finanse
-def_user = finanse
+engine = 
+host = 
+name = 
+user = 
+password =
+
+[test-db]
+engine = 
+host = 
+name = 
+user = 
+password =
