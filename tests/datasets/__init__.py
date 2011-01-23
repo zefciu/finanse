@@ -64,8 +64,8 @@ class Sklepy(DataSet):
         siec_id = Sieci.biedronka.ref('id')
         miasto_id = Miasta.poznan.ref('id')
 
-    class biedronka_piastowskie:
-        nazwa = 'Biedronka Piastowskie'
+    class biedronka_borek:
+        nazwa = 'Biedronka Borek'
         siec_id = Sieci.biedronka.ref('id')
         miasto_id = Miasta.wronki.ref('id')
 
@@ -73,3 +73,29 @@ class Sklepy(DataSet):
         nazwa = 'Warzywniak, Mickiewicza'
         siec_id = None
         miasto_id = Miasta.wronki.ref('id')
+
+class Zakupy(DataSet):
+    class szynka_w_biedronce:
+        data = date(2011, 1, 23)
+        sklep_id = Sklepy.biedronka_borek.ref('id')
+        produkt_id = Produkty.szynka.ref('id')
+        cena = 8
+        ilosc = .300
+    class krem_w_biedronce:
+        data = date(2011, 1, 23)
+        sklep_id = Sklepy.biedronka_borek.ref('id')
+        produkt_id = Produkty.szynka.ref('id')
+        cena = 20
+        ilosc = 1
+    class szynka_w_poznaniu:
+        data = date(2011, 1, 23)
+        sklep_id = Sklepy.biedronka_piastowskie.ref.('id')
+        produkt_id = Produkty.szynka.ref('id')
+        cena = 9.50
+        ilosc = .320
+    class mydlo_wczoraj:
+        data = date(2011, 1, 22)
+        sklep_id = Sklepy.biedronka_borek.ref.('id')
+        produkt_id = Produkty.mydlo.ref('id')
+        cena = 15.50
+        ilosc = 1
