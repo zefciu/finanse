@@ -31,6 +31,7 @@ root = Root()
 application = cp.tree.mount(
     Root(), '/', os.path.join(finanse.current_dir, 'web.ini')
 )
+application.test = False
 
 if __name__ == '__main__':
     httpd = make_server('', 8080, application)

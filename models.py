@@ -162,6 +162,7 @@ def init_model(test = False):
     config.read('config.ini')
 
     # username, password = shared.login(config.get('db', 'def_user'))
+    test = test or cherrypy.request.app.test
     section = 'db-test' if test else 'db'
 
     db_path = Template('$engine://$user:$password@$host/$db').substitute({
