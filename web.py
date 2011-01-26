@@ -2,6 +2,7 @@
 
 import cherrypy as cp
 import os.path
+from wsgiref.simple_server import make_server
 
 import finanse
 from finanse.controllers.kategorie import KategorieController
@@ -25,6 +26,12 @@ class Root:
     zakupy = ZakupyController()
     exposed = True
 
+root = Root()
+
+application = cp.tree.mount(
+    Root(), '/', os.path.join(finanse.current_dir, 'web.ini')
+)
+
 if __name__ == '__main__':
-    root = Root()
-    cp.quickstart(Root(), '/', 'web.ini')
+    httpd = make_server('', 8080, application)
+    httpd.serve_forever()

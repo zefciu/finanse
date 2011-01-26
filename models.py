@@ -6,6 +6,7 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 import shared
+import cherrypy
 
 Session = orm.sessionmaker()
 
@@ -74,7 +75,7 @@ zakupy_table = sa.Table(
 sa.Index('cena_produkt', zakupy_table.c.produkt_id, zakupy_table.c.cena)
 
 class BaseNameOnly(object):
-    def __init__(self, nazwa):
+    def __init__(self, nazwa = None):
         self.nazwa = nazwa
 
     @classmethod
@@ -96,7 +97,7 @@ class Kategoria(BaseNameOnly):
     human_name = 'Kategorię'
 
 class Podkategoria(object):
-    def __init__(self, nazwa, kategoria):
+    def __init__(self, nazwa = None, kategoria = None):
         self.nazwa = nazwa
         self.kategoria = kategoria
 
@@ -106,7 +107,7 @@ class Podkategoria(object):
         return cls(nazwa, kategoria)
 
 class Sklep(object):
-    def __init__(self, siec, miasto, nazwa):
+    def __init__(self, siec = None, miasto = None, nazwa = None):
         self.nazwa = nazwa
         self.siec = siec
         self.miasto = miasto
@@ -120,7 +121,7 @@ class Sklep(object):
         return cls(siec, miasto, nazwa)
 
 class Zakup(object):
-    def __init__(self, data, sklep, produkt, cena, ilosc = 1):
+    def __init__(self, data = None, sklep = None, produkt = None, cena = None, ilosc = 1):
         self.data = data
         self.sklep = sklep
         self.produkt = produkt
@@ -129,12 +130,12 @@ class Zakup(object):
 
 
 class Produkt(object):
-    def __init__(self, nazwa, podkategoria):
+    def __init__(self, nazwa = None, podkategoria = None):
         self.nazwa = nazwa
         self.podkategoria = podkategoria
 
     @classmethod
-    def from_input(cls, podkategoria):
+    def from_input(cls, podkategoria = None):
         nazwa = shared.get_answer('Wprowadź produkt: ')
         return cls(nazwa, podkategoria)
 
@@ -156,18 +157,20 @@ orm.mapper(Zakup, zakupy_table, properties = {
     'produkt': orm.relationship(Produkt, backref = 'zakupy'),
 })
 
-def init_model():
+def init_model(test = False):
     config = cp.SafeConfigParser()
     config.read('config.ini')
 
     # username, password = shared.login(config.get('db', 'def_user'))
+    section = 'db-test' if test else 'db'
 
     db_path = Template('$engine://$user:$password@$host/$db').substitute({
-        'engine': config.get('db', 'engine'),
-        'host': config.get('db', 'host'),
-        'db': config.get('db', 'name'),
-        'user': config.get('db', 'user'),
-        'password': config.get('db', 'password'),
+        'engine': config.get(section, 'engine'),
+        'host': config.get(section, 'host'),
+        'db': config.get(section, 'name'),
+        'user': config.get(section, 'user'),
+        'password': config.get(section, 'password'),
     })
     meta.engine = sa.create_engine(db_path, echo=False)
     Session.configure(bind=meta.engine)
+    meta.create_all(meta.engine)
