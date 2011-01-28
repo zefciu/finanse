@@ -17,4 +17,7 @@ class BaseTest(DataTestCase):
         self.datasets = (
             ds.KategoriaData, ds.PodkategoriaData, ds.ProduktData, ds.SiecData,
             ds.MiastoData, ds.SklepData, ds.ZakupData)
-        self.fixture.tearDown()
+
+#     def setUp(self):
+#         super(BaseTest, self).setUp()
+#         self.tearDown()
