@@ -28,11 +28,25 @@ Ext.fi.nz.CommonCombo = Ext.extend(Ext.form.ComboBox, {
 		submitValue: true
 	});
 
+Ext.fi.nz.CommonCF = Ext.extend(Ext.form.CompositeField, {
+		initComponent: function () {
+			this.items = [
+				new Ext.fi.nz.CommonCombo(arguments[0]),
+				new Ext.Button({
+						text: 'Dodaj',
+						handler: this.onAdd,
+						scope: this
+					})
+			]
+			Ext.fi.nz.CommonCF.superclass.initComponent.apply(this, arguments);
+		}
+});
+
 Ext.fi.nz.form = new Ext.form.FormPanel({
 		region: 'west',
 		width: 500,
 		items: [
-			Ext.fi.nz.cat_combo = new Ext.fi.nz.CommonCombo({
+			Ext.fi.nz.cat_combo = new Ext.fi.nz.CommonCF({
 					url: 'kategorie',
 					fieldLabel: 'Kategoria',
 					name: 'kategoria.nazwa',
