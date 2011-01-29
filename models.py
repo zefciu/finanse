@@ -87,6 +87,18 @@ class BaseNameOnly(object):
         name = shared.get_answer('Wprowadź %s: ' % cls.human_name)
         return cls(name)
 
+    @classmethod
+    def from_data(cls, inp):
+        try:
+            return cls(inp['nazwa'])
+        except KeyError:
+            raise ValueError, 'No name provided'
+
+    def __str__(self):
+        return '<%s: %s>' % (type(self), self.nazwa)
+
+    __repr__ = __str__
+
 class Siec(BaseNameOnly):
     human_name = 'Sieć'
 
@@ -106,6 +118,19 @@ class Podkategoria(object):
         nazwa = shared.get_answer('Wprowadź podkategorię: ')
         return cls(nazwa, kategoria)
 
+    @classmethod
+    def from_data(cls, inp):
+        try:
+            kat = s.Query(Kategoria).filter(Kategoria.id == inp['kategoria_id'])
+        except orm.exc.NoResultFound:
+            raise ValueError('Invalid kategoria_id')
+        except KeyError:
+            raise ValueError('kategoria_id mandatory')
+        try:
+            return cls(inp['nazwa'], kat)
+        except KeyError:
+            raise ValueError, 'No name provided'
+
 class Sklep(object):
     def __init__(self, siec = None, miasto = None, nazwa = None):
         self.nazwa = nazwa
@@ -119,6 +144,29 @@ class Sklep(object):
         miasto = shared.choice('Wybierz Miasto', session, Miasto, shared.enter_new(Miasto), allow_empty = True)
         nazwa = shared.get_answer('Nazwa sklepu: ')
         return cls(siec, miasto, nazwa)
+
+    @classmethod
+    def from_data(cls, inp):
+        try:
+            miasto = s.Query(Miasto).filter(Miasto.id == inp['miasto_id'])
+        except orm.exc.NoResultFound:
+            raise ValueError('Invalid miasto_id')
+        except KeyError:
+            raise ValueError('miasto_id mandatory')
+
+        if inp.has_key('siec_id'):
+            try:
+                siec = s.Query(Siec).filter(Siec.id == inp['siec_id'])
+            except orm.exc.NoResultFound:
+                raise ValueError('Invalid siec_id')
+        else:
+            siec = None
+
+        try:
+            return cls(siec, miasto, inp['nazwa'])
+        except KeyError:
+            raise ValueError, 'No name provided'
+
 
 class Zakup(object):
     def __init__(self, data = None, sklep = None, produkt = None, cena = None, ilosc = 1):

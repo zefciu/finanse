@@ -18,6 +18,3 @@ class BaseTest(DataTestCase):
             ds.KategoriaData, ds.PodkategoriaData, ds.ProduktData, ds.SiecData,
             ds.MiastoData, ds.SklepData, ds.ZakupData)
 
-#     def setUp(self):
-#         super(BaseTest, self).setUp()
-#         self.tearDown()

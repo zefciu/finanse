@@ -1,5 +1,5 @@
 from base import BaseTest
-from finanse.models import Session, Sklep, Produkt, Zakup 
+from finanse.models import Session, Sklep, Produkt, Zakup, Kategoria
 import json
 
 class TestPost(BaseTest):
@@ -18,11 +18,26 @@ class TestPost(BaseTest):
         })
         print input_data
 
-        self.app.post('/zakupy', input_data, {'Content-Type': 'application/json'})
+        self.app.post(
+            '/zakupy', input_data, {'Content-Type': 'application/json'}
+        )
         zakupy = s.query(Zakup).all()
         assert len(zakupy) == 7
         s.query(Zakup).delete()
         s.commit()
-        
 
+    def kategoria_test(self):
+        s = Session()
+        input_data = json.dumps({'nazwa': 'Lekarstwa'})
+        res = self.app.post(
+            '/kategorie', input_data, {'Content-Type': 'application/json'}
+        )
+        print res
 
+        kats = s.query(Kategoria).all()
+        print kats
+        assert len(kats) == 3
+        assert 'Lekarstwa' in [kat.nazwa for kat in kats]
+        s.query(Kategoria).filter(
+            Kategoria.id == json.loads(res.body)['id']
+        ).delete()

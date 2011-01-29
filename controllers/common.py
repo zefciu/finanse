@@ -20,3 +20,18 @@ class CommonController(object):
         result = [{'id': i.id, 'nazwa': i.nazwa} for i in items]
         cp.response.headers['Content-Type'] = 'application/json'
         return json.dumps(result)
+
+    def POST(self, *args, **kwargs):
+        try:
+            inp = json.load(cp.request.body)
+        except ValueError:
+            raise cp.HTTPError('400', 'Malformed JSON')
+        init_model()
+        s = Session()
+        try:
+            m = self.Model.from_data(inp)
+        except ValueError as e:
+            raise cp.HTTPError(400, 'Bad input: %s' % e.args[0])
+        s.add(m)
+        s.commit()
+        return json.dumps({'id': m.id})
