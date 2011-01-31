@@ -38,6 +38,5 @@ class TestPost(BaseTest):
         print kats
         assert len(kats) == 3
         assert 'Lekarstwa' in [kat.nazwa for kat in kats]
-        s.query(Kategoria).filter(
-            Kategoria.id == json.loads(res.body)['id']
-        ).delete()
+        s.query(Kategoria).delete()
+        s.commit()

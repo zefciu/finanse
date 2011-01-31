@@ -22,23 +22,43 @@ sa.Index('kategoria_nazwa', kategorie_table.c.nazwa, unique = True)
 
 podkategorie_table = sa.Table(
     'podkategorie', meta,
-    sa.Column('id', sa.types.Integer(), sa.Sequence('podkategorie_id_seq'), primary_key=True),
-    sa.Column('kategoria_id', sa.types.Integer(), sa.ForeignKey('kategorie.id'), nullable = False),
+    sa.Column(
+        'id', sa.types.Integer(), sa.Sequence('podkategorie_id_seq'),
+        primary_key=True
+    ),
+    sa.Column(
+        'kategoria_id', sa.types.Integer(), sa.ForeignKey(
+            'kategorie.id', ondelete = 'CASCADE'
+        ), nullable = False
+    ),
     sa.Column('nazwa', sa.types.String(128), nullable = False),
 )
 
-sa.Index('podkategoria_nazwa', podkategorie_table.c.kategoria_id, podkategorie_table.c.nazwa, unique = True)
+sa.Index(
+    'podkategoria_nazwa',
+    podkategorie_table.c.kategoria_id, podkategorie_table.c.nazwa,
+    unique = True
+)
 
 produkty_table = sa.Table(
     'produkty', meta,
-    sa.Column('id', sa.types.Integer(), sa.Sequence('produkty_id_seq'), primary_key=True),
-    sa.Column('podkategoria_id', sa.types.Integer(), sa.ForeignKey('podkategorie.id'), nullable = False),
+    sa.Column(
+        'id', sa.types.Integer(), sa.Sequence('produkty_id_seq'),
+        primary_key=True
+    ),
+    sa.Column(
+        'podkategoria_id', sa.types.Integer(), sa.ForeignKey(
+            'podkategorie.id', ondelete = 'CASCADE'
+        ), nullable = False
+    ),
     sa.Column('nazwa', sa.types.String(128), nullable = False),
 )
 
 sieci_table = sa.Table(
     'sieci', meta, 
-    sa.Column('id', sa.types.Integer(), sa.Sequence('sieci_id_seq'), primary_key=True),
+    sa.Column(
+        'id', sa.types.Integer(), sa.Sequence('sieci_id_seq'), primary_key=True
+    ),
     sa.Column('nazwa', sa.types.String(128), nullable = False),
 )
 
@@ -46,7 +66,10 @@ sa.Index('siec_nazwa', sieci_table.c.nazwa, unique = True)
 
 miasta_table = sa.Table(
     'miasta', meta, 
-    sa.Column('id', sa.types.Integer(), sa.Sequence('miasta_id_seq'), primary_key=True),
+    sa.Column(
+        'id', sa.types.Integer(), sa.Sequence('miasta_id_seq'),
+        primary_key=True
+    ),
     sa.Column('nazwa', sa.types.String(128), nullable = False),
 )
 
@@ -54,19 +77,40 @@ sa.Index('miasto_nazwa', miasta_table.c.nazwa, unique = True)
 
 sklepy_table = sa.Table(
     'sklepy', meta,
-    sa.Column('id', sa.types.Integer(), sa.Sequence('sklepy_id_seq'), primary_key=True),
+    sa.Column(
+        'id', sa.types.Integer(), sa.Sequence('sklepy_id_seq'), primary_key=True
+    ),
     sa.Column('nazwa', sa.types.String(128), nullable = False, index = True),
-    sa.Column('siec_id', sa.types.Integer(32), sa.ForeignKey('sieci.id'), nullable = True),
-    sa.Column('miasto_id', sa.types.Integer(32), sa.ForeignKey('miasta.id'), nullable = True),
+    sa.Column(
+        'siec_id', sa.types.Integer(32), sa.ForeignKey('sieci.id'),
+        nullable = True
+    ),
+    sa.Column(
+        'miasto_id', sa.types.Integer(32), sa.ForeignKey('miasta.id'),
+        nullable = True
+    ),
 )
 
 sa.Index('sklep_nazwa', sklepy_table.c.nazwa, unique = True)
 
 zakupy_table = sa.Table(
     'zakupy', meta,
-    sa.Column('id', sa.types.Integer(), sa.Sequence('zakupy_id_seq'), primary_key=True),
-    sa.Column('produkt_id', sa.types.Integer(), sa.ForeignKey('produkty.id'), nullable = False),
-    sa.Column('sklep_id', sa.types.Integer(), sa.ForeignKey('sklepy.id'), nullable = True),
+    sa.Column(
+        'id', sa.types.Integer(), sa.Sequence('zakupy_id_seq'),
+        primary_key=True
+    ),
+    sa.Column(
+        'produkt_id', sa.types.Integer(), sa.ForeignKey(
+            'produkty.id', ondelete = 'CASCADE'
+        ),
+        nullable = False
+    ),
+    sa.Column(
+        'sklep_id', sa.types.Integer(), sa.ForeignKey(
+            'sklepy.id', ondelete = 'CASCADE'
+        ),
+        nullable = False
+    ),
     sa.Column('ilosc', sa.types.Numeric(7, 3), nullable = False),
     sa.Column('cena', sa.types.Numeric(7, 2), nullable = False),
     sa.Column('data', sa.types.Date(), nullable = False),
