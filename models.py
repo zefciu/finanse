@@ -233,6 +233,21 @@ class Produkt(object):
         nazwa = shared.get_answer('Wprowadź produkt: ')
         return cls(nazwa, podkategoria)
 
+    @classmethod
+    def from_data(cls, inp, s):
+        try:
+            kat = s.query(Podkategoria).filter(
+                Podkategoria.id == inp['podkategoria_id']
+            ).one()
+        except orm.exc.NoResultFound:
+            raise ValueError('Invalid podkategoria_id')
+        except KeyError:
+            raise ValueError('podkategoria_id mandatory')
+        try:
+            return cls(inp['nazwa'], kat)
+        except KeyError:
+            raise ValueError, 'No name provided'
+
 orm.mapper(Siec, sieci_table)
 orm.mapper(Miasto, miasta_table)
 orm.mapper(Sklep, sklepy_table, properties = {

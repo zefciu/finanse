@@ -29,18 +29,24 @@ class ZakupyController(object):
             sklep = s.query(Sklep).filter(Sklep.id == sklep_id).one()
         except orm.exc.NoResultFound:
             raise cp.HTTPError('400', 'Bad shop')
+
+        zakupy = []
         
         for z in inp['zakupy']:
             try:
                 produkt = s.query(Produkt).filter(
-                    Produkt.id == z['produkt.id']
+                    Produkt.id == z['produkt-id']
                 ).one()
             except orm.exc.NoResultFound:
                 raise cp.HTTPError('400', 'Bad product')
             
-            zakup = Zakup(
-                data, sklep, produkt, Decimal(z['cena']), Decimal(z['ilosc']))
+            zakupy.append(Zakup(
+                data, sklep, produkt, Decimal(z['cena']), Decimal(z['ilosc'])
+            ))
 
         s.commit()
+        for z in inp['zakupy']:
+            z['id'] = zakupy.pop(0).id
+
         cp.response.headers['Content-Type'] = 'application/json'
-        return '{"success": true}'
+        return json.dumps({"success": True, 'message': '', 'zakupy': inp['zakupy']})

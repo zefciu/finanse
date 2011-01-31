@@ -39,6 +39,7 @@ Ext.fi.nz.CommonCF = Ext.extend(Ext.form.CompositeField, {
 					})
 			]
 			Ext.fi.nz.CommonCF.superclass.initComponent.apply(this, arguments);
+			this.relayEvents(this.combo, 'select');
 		},
 		onAdd: function () {
 			Ext.Msg.prompt(
@@ -49,7 +50,12 @@ Ext.fi.nz.CommonCF = Ext.extend(Ext.form.CompositeField, {
 			)
 		},
 		onSubmit: function (btn, txt) {
-			data = {'nazwa': txt}
+			if (btn !== 'ok') {
+				return;
+			}
+			data = {'nazwa': txt};
+			console.log(this.combo.store.baseParams);
+			Ext.apply(data, this.combo.store.baseParams);
 			Ext.Ajax.request({
 					method: 'POST',
 					jsonData: data,
@@ -60,7 +66,12 @@ Ext.fi.nz.CommonCF = Ext.extend(Ext.form.CompositeField, {
 		},
 		onSuccess: function () {
 			this.combo.store.load();
+		},
+		setBaseParam: function () {
+			console.log('SBP');
+			this.combo.setBaseParam.apply(this.combo, arguments);
 		}
+
 
 });
 
@@ -76,17 +87,21 @@ Ext.fi.nz.form = new Ext.form.FormPanel({
 						hiddenName: 'kategoria.id'
 					}
 				}),
-			Ext.fi.nz.subcat_combo = new Ext.fi.nz.CommonCombo({
-					fieldLabel: 'Podkategoria',
-					url: 'podkategorie',
-					name: 'podkategoria.nazwa',
-					hiddenName: 'podkategoria.id'
+			Ext.fi.nz.subcat_combo = new Ext.fi.nz.CommonCF({
+					comboConf: {
+						fieldLabel: 'Podkategoria',
+						url: 'podkategorie',
+						name: 'podkategoria.nazwa',
+						hiddenName: 'podkategoria-id'
+					}
 				}),
-			Ext.fi.nz.product_combo = new Ext.fi.nz.CommonCombo({
-					fieldLabel: 'Produkt',
-					url: 'produkty',
-					name: 'produkt.nazwa',
-					hiddenName: 'produkt.id'
+			Ext.fi.nz.product_combo = new Ext.fi.nz.CommonCF({
+					comboConf: {
+						fieldLabel: 'Produkt',
+						url: 'produkty',
+						name: 'produkt.nazwa',
+						hiddenName: 'produkt-id'
+					}
 				}),
 			new Ext.form.TextField({name: 'ilosc', fieldLabel: 'Ilość'}),
 			new Ext.form.TextField({name: 'cena', fieldLabel: 'Cena'})
@@ -105,18 +120,18 @@ Ext.fi.nz.store = new Ext.data.JsonStore({
 		restful: false,
 		root: 'zakupy',
 		fields: [
-			'id', 'produkt.id', 'produkt.nazwa', 'kategoria.id',
-			'kategoria.nazwa', 'podkategoria.id', 'podkategoria.nazwa', 'cena',
-			'ilosc' ],
+			'id', 'produkt-id', 'produkt-nazwa', 'kategoria-id',
+			'kategoria-nazwa', 'podkategoria-id', 'podkategoria-nazwa', 'cena',
+			'ilosc'],
 		writer: new Ext.data.JsonWriter({
 				encode: false,
 				listful: true
 			})
 	});
 
-Ext.fi.nz.store.on('beforesave', function (store, data) {
-		console.log(data.create);
-});
+Ext.fi.nz.store.on('write', function () {
+	window.location.reload();
+})
 
 Ext.fi.nz.onSubmit = function () {
 	Ext.fi.nz.store.setBaseParam('data', Ext.fi.nz.date_field.getValue());
@@ -129,9 +144,9 @@ Ext.fi.nz.grid = new Ext.grid.GridPanel({
 		region: 'center',
 		store: Ext.fi.nz.store,
 		columns: [
-			{header: 'Kategoria', dataIndex: 'kategoria.nazwa'},
-			{header: 'Podkategoria', dataIndex: 'podkategoria.nazwa'},
-			{header: 'Produkt', dataIndex: 'produkt.nazwa'},
+			{header: 'Kategoria', dataIndex: 'kategoria-nazwa'},
+			{header: 'Podkategoria', dataIndex: 'podkategoria-nazwa'},
+			{header: 'Produkt', dataIndex: 'produkt-nazwa'},
 			{header: 'Ilość', dataIndex: 'ilosc'},
 			{header: 'Cena', dataIndex: 'cena'},
 		],
@@ -156,16 +171,16 @@ Ext.onReady(function () {
 				layout: 'border',
 				items: [Ext.fi.nz.form, Ext.fi.nz.grid]
 			});
-		Ext.fi.nz.cat_combo.on('select', function (combo, rec, i) {
-				Ext.fi.nz.subcat_combo.store.setBaseParam(
+		Ext.fi.nz.cat_combo.combo.on('select', function (combo, rec, i) {
+				Ext.fi.nz.subcat_combo.combo.store.setBaseParam(
 					'kategoria_id', rec.get('id')
 				);
-				Ext.fi.nz.subcat_combo.store.load();
+				Ext.fi.nz.subcat_combo.combo.store.load();
 			});
-		Ext.fi.nz.subcat_combo.on('select', function (combo, rec, i) {
-				Ext.fi.nz.product_combo.store.setBaseParam(
+		Ext.fi.nz.subcat_combo.combo.on('select', function (combo, rec, i) {
+				Ext.fi.nz.product_combo.combo.store.setBaseParam(
 					'podkategoria_id', rec.get('id')
 				);
-				Ext.fi.nz.product_combo.store.load();
+				Ext.fi.nz.product_combo.combo.store.load();
 			});
 	});
