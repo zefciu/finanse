@@ -31,15 +31,37 @@ Ext.fi.nz.CommonCombo = Ext.extend(Ext.form.ComboBox, {
 Ext.fi.nz.CommonCF = Ext.extend(Ext.form.CompositeField, {
 		initComponent: function () {
 			this.items = [
-				new Ext.fi.nz.CommonCombo(arguments[0]),
-				new Ext.Button({
+				this.combo = new Ext.fi.nz.CommonCombo(this.comboConf),
+				this.btn = new Ext.Button({
 						text: 'Dodaj',
 						handler: this.onAdd,
 						scope: this
 					})
 			]
 			Ext.fi.nz.CommonCF.superclass.initComponent.apply(this, arguments);
+		},
+		onAdd: function () {
+			Ext.Msg.prompt(
+				this.fieldLabel + ' - dodawanie',
+				'Podaj nazwę',
+				this.onSubmit,
+				this
+			)
+		},
+		onSubmit: function (btn, txt) {
+			data = {'nazwa': txt}
+			Ext.Ajax.request({
+					method: 'POST',
+					jsonData: data,
+					url: this.combo.url,
+					success: this.onSuccess,
+					scope: this
+				})
+		},
+		onSuccess: function () {
+			this.combo.store.load();
 		}
+
 });
 
 Ext.fi.nz.form = new Ext.form.FormPanel({
@@ -47,10 +69,12 @@ Ext.fi.nz.form = new Ext.form.FormPanel({
 		width: 500,
 		items: [
 			Ext.fi.nz.cat_combo = new Ext.fi.nz.CommonCF({
-					url: 'kategorie',
-					fieldLabel: 'Kategoria',
-					name: 'kategoria.nazwa',
-					hiddenName: 'kategoria.id'
+					comboConf: {
+						url: 'kategorie',
+						fieldLabel: 'Kategoria',
+						name: 'kategoria.nazwa',
+						hiddenName: 'kategoria.id'
+					}
 				}),
 			Ext.fi.nz.subcat_combo = new Ext.fi.nz.CommonCombo({
 					fieldLabel: 'Podkategoria',
