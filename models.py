@@ -132,7 +132,7 @@ class BaseNameOnly(object):
         return cls(name)
 
     @classmethod
-    def from_data(cls, inp):
+    def from_data(cls, inp, s):
         try:
             return cls(inp['nazwa'])
         except KeyError:
@@ -163,9 +163,11 @@ class Podkategoria(object):
         return cls(nazwa, kategoria)
 
     @classmethod
-    def from_data(cls, inp):
+    def from_data(cls, inp, s):
         try:
-            kat = s.Query(Kategoria).filter(Kategoria.id == inp['kategoria_id'])
+            kat = s.query(Kategoria).filter(
+                Kategoria.id == inp['kategoria_id']
+            ).one()
         except orm.exc.NoResultFound:
             raise ValueError('Invalid kategoria_id')
         except KeyError:
@@ -190,9 +192,9 @@ class Sklep(object):
         return cls(siec, miasto, nazwa)
 
     @classmethod
-    def from_data(cls, inp):
+    def from_data(cls, inp, s):
         try:
-            miasto = s.Query(Miasto).filter(Miasto.id == inp['miasto_id'])
+            miasto = s.query(Miasto).filter(Miasto.id == inp['miasto_id']).one()
         except orm.exc.NoResultFound:
             raise ValueError('Invalid miasto_id')
         except KeyError:
@@ -200,7 +202,7 @@ class Sklep(object):
 
         if inp.has_key('siec_id'):
             try:
-                siec = s.Query(Siec).filter(Siec.id == inp['siec_id'])
+                siec = s.query(Siec).filter(Siec.id == inp['siec_id'])
             except orm.exc.NoResultFound:
                 raise ValueError('Invalid siec_id')
         else:

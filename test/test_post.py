@@ -1,5 +1,6 @@
 from base import BaseTest
 from finanse.models import Session, Sklep, Produkt, Zakup, Kategoria
+from finanse.models import Podkategoria
 import json
 
 class TestPost(BaseTest):
@@ -40,3 +41,24 @@ class TestPost(BaseTest):
         assert 'Lekarstwa' in [kat.nazwa for kat in kats]
         s.query(Kategoria).delete()
         s.commit()
+
+    def podkategoria_test(self):
+        s = Session()
+        kategoria_id = s.query(Kategoria).filter(
+            Kategoria.nazwa == 'Chemia'
+        ).one().id
+        input_data = json.dumps({
+            'nazwa': 'Kuchenna', 'kategoria_id': kategoria_id
+        })
+        res = self.app.post(
+            '/podkategorie', input_data, {'Content-Type': 'application/json'}
+        )
+        print res
+        subkats = s.query(Podkategoria).filter(
+            Podkategoria.kategoria_id == kategoria_id
+        ).all()
+        assert len(subkats) == 3
+        assert 'Kuchenna' in [subkat.nazwa for subkat in subkats]
+        s.query(Podkategoria).delete()
+        s.commit()
+

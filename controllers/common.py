@@ -29,7 +29,7 @@ class CommonController(object):
         init_model()
         s = Session()
         try:
-            m = self.Model.from_data(inp)
+            m = self.Model.from_data(inp, s)
         except ValueError as e:
             raise cp.HTTPError(400, 'Bad input: %s' % e.args[0])
         s.add(m)
