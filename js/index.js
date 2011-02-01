@@ -160,7 +160,7 @@ Ext.fi.nz.grid = new Ext.grid.GridPanel({
 			{header: 'Podkategoria', dataIndex: 'podkategoria-nazwa'},
 			{header: 'Produkt', dataIndex: 'produkt-nazwa'},
 			{header: 'Ilość', dataIndex: 'ilosc'},
-			{header: 'Cena', dataIndex: 'cena'},
+			{header: 'Cena', dataIndex: 'cena'}
 		],
 		tbar: [
 			new Ext.form.Label({text: 'Sklep:'}),
