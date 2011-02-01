@@ -6,6 +6,9 @@ from sqlalchemy import orm
 
 from finanse.models import Session, init_model, Zakup, Sklep, Produkt
 
+def to_dec(v):
+    return Decimal(v.replace(',', '.'))
+
 class ZakupyController(object):
 
     exposed = True
@@ -41,7 +44,7 @@ class ZakupyController(object):
                 raise cp.HTTPError('400', 'Bad product')
             
             zakupy.append(Zakup(
-                data, sklep, produkt, Decimal(z['cena']), Decimal(z['ilosc'])
+                data, sklep, produkt, to_dec(z['cena']), to_dec(z['ilosc'])
             ))
 
         s.commit()

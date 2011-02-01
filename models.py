@@ -193,12 +193,15 @@ class Sklep(object):
 
     @classmethod
     def from_data(cls, inp, s):
-        try:
-            miasto = s.query(Miasto).filter(Miasto.id == inp['miasto_id']).one()
-        except orm.exc.NoResultFound:
-            raise ValueError('Invalid miasto_id')
-        except KeyError:
-            raise ValueError('miasto_id mandatory')
+        if inp.has_key('sklep_id'):
+            try: 
+                miasto = s.query(Miasto).filter(
+                    Miasto.id == inp['miasto_id']
+                ).one()
+            except orm.exc.NoResultFound:
+                raise ValueError('Invalid miasto_id')
+        else:
+            miasto = None
 
         if inp.has_key('siec_id'):
             try:

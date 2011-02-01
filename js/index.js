@@ -83,15 +83,15 @@ Ext.fi.nz.form = new Ext.form.FormPanel({
 					comboConf: {
 						url: 'kategorie',
 						fieldLabel: 'Kategoria',
-						name: 'kategoria.nazwa',
-						hiddenName: 'kategoria.id'
+						name: 'kategoria-nazwa',
+						hiddenName: 'kategoria-id'
 					}
 				}),
 			Ext.fi.nz.subcat_combo = new Ext.fi.nz.CommonCF({
 					comboConf: {
 						fieldLabel: 'Podkategoria',
 						url: 'podkategorie',
-						name: 'podkategoria.nazwa',
+						name: 'podkategoria-nazwa',
 						hiddenName: 'podkategoria-id'
 					}
 				}),
@@ -99,7 +99,7 @@ Ext.fi.nz.form = new Ext.form.FormPanel({
 					comboConf: {
 						fieldLabel: 'Produkt',
 						url: 'produkty',
-						name: 'produkt.nazwa',
+						name: 'produkt-nazwa',
 						hiddenName: 'produkt-id'
 					}
 				}),
@@ -129,15 +129,27 @@ Ext.fi.nz.store = new Ext.data.JsonStore({
 			})
 	});
 
-Ext.fi.nz.store.on('write', function () {
-	window.location.reload();
+Ext.fi.nz.store.on('write', function (st, action, result) {
+		Ext.Msg.alert(
+			'Zapisano',
+			'Zapisano ' + result.length + ' zakupów',
+			window.location.reload,
+			window.location
+		);
 })
 
 Ext.fi.nz.onSubmit = function () {
 	Ext.fi.nz.store.setBaseParam('data', Ext.fi.nz.date_field.getValue());
-	Ext.fi.nz.store.setBaseParam('sklep', Ext.fi.nz.shop_combo.getValue());
+	Ext.fi.nz.store.setBaseParam(
+		'sklep', Ext.fi.nz.shop_combo.combo.getValue()
+	);
 	Ext.fi.nz.store.save();
 }
+
+Ext.fi.nz.onDelete = function () {
+	Ext.fi.nz.store.remove(Ext.fi.nz.grid.getSelectionModel().getSelected());
+}
+
 
 
 Ext.fi.nz.grid = new Ext.grid.GridPanel({
@@ -152,8 +164,13 @@ Ext.fi.nz.grid = new Ext.grid.GridPanel({
 		],
 		tbar: [
 			new Ext.form.Label({text: 'Sklep:'}),
-			Ext.fi.nz.shop_combo = new Ext.fi.nz.CommonCombo({
-					url: 'sklepy'
+			Ext.fi.nz.shop_combo = new Ext.fi.nz.CommonCF({
+					comboConf: {
+						url: 'sklepy',
+						width: 200,
+						fieldLabel: 'Sklep'
+					},
+					width: 250
 				}),
 			new Ext.form.Label({text: 'Data:'}),
 			Ext.fi.nz.date_field = new Ext.form.DateField({format: 'Y-m-d'})
@@ -162,6 +179,9 @@ Ext.fi.nz.grid = new Ext.grid.GridPanel({
 			{
 				text: 'Zapisz zakupy',
 				handler: Ext.fi.nz.onSubmit
+			}, {
+				text: 'Usuń zakup',
+				handler: Ext.fi.nz.onDelete
 			}
 		]
 	});
