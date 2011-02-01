@@ -1,6 +1,7 @@
 # vim: set fileencoding=utf-8
 import ConfigParser as cp
 from string import Template
+import os
 
 import sqlalchemy as sa
 from sqlalchemy import orm
@@ -271,7 +272,8 @@ orm.mapper(Zakup, zakupy_table, properties = {
 
 def init_model(test = False):
     config = cp.SafeConfigParser()
-    config.read('config.ini')
+    from finanse.current_dir import current_dir
+    config.read(os.path.join(current_dir, 'config.ini'))
 
     # username, password = shared.login(config.get('db', 'def_user'))
     test = test or cherrypy.request.app.test

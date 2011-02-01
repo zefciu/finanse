@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import sys
+sys.path.append('/home/szymon/Projekty/')
+
 import cherrypy as cp
 import os.path
 from wsgiref.simple_server import make_server
@@ -10,14 +13,13 @@ from finanse.controllers.podkategorie import PodkategorieController
 from finanse.controllers.produkty import ProduktyController
 from finanse.controllers.sklepy import SklepyController
 from finanse.controllers.zakupy import ZakupyController
-
-finanse.current_dir = os.path.dirname(os.path.abspath(__file__))
+from finanse.current_dir import current_dir
 
 class Root:
     @cp.expose
     def GET(self):
         return cp.lib.static.serve_file(os.path.join(
-            finanse.current_dir, 'index.html'
+            current_dir, 'index.html'
         ))
     kategorie = KategorieController()
     podkategorie = PodkategorieController()
@@ -29,7 +31,7 @@ class Root:
 root = Root()
 
 application = cp.tree.mount(
-    Root(), '/', os.path.join(finanse.current_dir, 'web.ini')
+    Root(), '/', os.path.join(current_dir, 'web.ini')
 )
 application.test = False
 
