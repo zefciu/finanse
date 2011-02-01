@@ -3,3 +3,4 @@ config.ini
 extjs
 static
 compiler.jar
+init.wsgi
